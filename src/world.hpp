@@ -14,6 +14,7 @@
 #include "camera.hpp"
 #include "track.hpp"
 #include "plane.hpp"
+#include "model.hpp"
 
 
 class World
@@ -79,6 +80,9 @@ public:
         lamp2 = new Cube(glm::vec3(-300.0f, 50.0f, 0.0f), *no_shade_shader);
         lamp2->set_color(white_color);
 
+        // create teapot
+        teapot = new Model("../../models/teapot.obj");
+
         enable_lighting();
 
         return 0;
@@ -106,6 +110,7 @@ public:
         }
 
         // todo draw stuff
+        teapot->Draw(*no_shade_shader);
     }
 
     void toggle_lighting()
@@ -223,6 +228,8 @@ private:
     Plane* ground = nullptr;
     Cube* lamp1 = nullptr;
     Cube* lamp2 = nullptr;
+
+    Model* teapot = nullptr;
 
 };
 

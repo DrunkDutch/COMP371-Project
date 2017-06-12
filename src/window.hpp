@@ -25,9 +25,11 @@ public:
 
     ~Window()
     {
-        delete world;
-        delete glfw_window;
-        glfwTerminate();
+        if (world != nullptr) {
+            delete world;
+        }
+
+        glfwTerminate();  // deallocates glfw_window
     }
 
     int initialize()
@@ -49,6 +51,9 @@ public:
         }
 
         glfwMakeContextCurrent(glfw_window);
+
+        // capture cursor
+        glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // Initialize GLEW extension handler
         glewExperimental = GL_TRUE;
@@ -80,6 +85,8 @@ public:
 
             // update input handling
             glfwPollEvents();
+
+            do_camera_movement(delta_time);
 
             // draw world
             world->draw(delta_time, polygon_mode);
@@ -141,6 +148,7 @@ public:
         // world or axis rotation
         if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
             // enter key
+            world->toggle_lighting();
         } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
             // space key
         }
@@ -152,6 +160,19 @@ public:
             } else if (action == GLFW_RELEASE) {
                 keys[key] = false;
             }
+        }
+    }
+
+    void do_camera_movement(float delta_time)
+    {
+        if (keys[GLFW_KEY_W]) {
+            world->get_camera()->ProcessKeyboard(FORWARD, delta_time);
+        } if (keys[GLFW_KEY_S]) {
+            world->get_camera()->ProcessKeyboard(BACKWARD, delta_time);
+        } if (keys[GLFW_KEY_A]) {
+            world->get_camera()->ProcessKeyboard(LEFT, delta_time);
+        } if (keys[GLFW_KEY_D]) {
+            world->get_camera()->ProcessKeyboard(RIGHT, delta_time);
         }
     }
 
