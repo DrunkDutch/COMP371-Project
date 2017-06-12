@@ -1,0 +1,7 @@
+[requires]
+glew/2.0.0@coding3d/stable
+glfw/3.2.1@coding3d/stable
+glm/0.9.8.4@coding3d/stable
+
+[generators]
+cmake
