@@ -1,0 +1,15 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl M_001acajou
+Ka 0.000000 0.000000 0.000000
+Kd 0.392157 0.196078 0.082353
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf1/M_001acajou.jpg
+
+newmtl Celery
+Ka 0.000000 0.000000 0.000000
+Kd 0.945098 0.925490 0.709804
+Ks 0.330000 0.330000 0.330000
+

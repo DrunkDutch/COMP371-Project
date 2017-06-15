@@ -1,0 +1,68 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl Limba_seamless
+Ka 0.000000 0.000000 0.000000
+Kd 0.874510 0.592157 0.286275
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf2/Limba_seamless.jpg
+
+newmtl Wood_4_Ver
+Ka 0.000000 0.000000 0.000000
+Kd 0.678431 0.376471 0.184314
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf2/Wood_4_Ver.jpg
+
+newmtl Fin_Wood_Board_YellowPine_V
+Ka 0.000000 0.000000 0.000000
+Kd 0.890196 0.650980 0.325490
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf2/Fin_Wood_Board_YellowPine_V.jpg
+
+newmtl Ash_1_Hor
+Ka 0.000000 0.000000 0.000000
+Kd 0.749020 0.580392 0.337255
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf2/Ash_1_Hor.jpg
+
+newmtl M_5111588864_3ec9b15641_z
+Ka 0.000000 0.000000 0.000000
+Kd 0.874510 0.592157 0.286275
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf2/M_5111588864_3ec9b15641_z.jpg
+
+newmtl Beech_1_Hor
+Ka 0.000000 0.000000 0.000000
+Kd 0.862745 0.650980 0.384314
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf2/Beech_1_Hor.jpg
+
+newmtl Color_008
+Ka 0.000000 0.000000 0.000000
+Kd 0.117647 0.117647 0.117647
+Ks 0.330000 0.330000 0.330000
+
+newmtl hickory
+Ka 0.000000 0.000000 0.000000
+Kd 0.874510 0.592157 0.286275
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf2/hickory.jpg
+
+newmtl WoodFine0046_1_L
+Ka 0.000000 0.000000 0.000000
+Kd 0.874510 0.592157 0.286275
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf2/WoodFine0046_1_L.jpg
+
+newmtl Cedar_Lebanon_seamless
+Ka 0.000000 0.000000 0.000000
+Kd 0.670588 0.274510 0.109804
+Ks 0.330000 0.330000 0.330000
+map_Kd shelf2/Cedar_Lebanon_seamless.jpg
+
+newmtl Color_007
+Ka 0.000000 0.000000 0.000000
+Kd 0.227451 0.227451 0.227451
+Ks 0.330000 0.330000 0.330000
+

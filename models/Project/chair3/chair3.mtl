@@ -1,0 +1,16 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl _Color_000_18
+Ka 0.000000 0.000000 0.000000
+Kd 0.666667 0.450980 0.266667
+Ks 0.330000 0.330000 0.330000
+map_Kd chair3/_Color_000_18.jpg
+
+newmtl _2
+Ka 0.000000 0.000000 0.000000
+Kd 0.356863 0.356863 0.356863
+Ks 0.330000 0.330000 0.330000
+map_Kd chair3/_2.jpg
+

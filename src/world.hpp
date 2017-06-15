@@ -81,7 +81,9 @@ public:
         lamp2->set_color(white_color);
 
         // create teapot
-        teapot = new Model("../../models/teapot.obj");
+        walls = new Model("../../models/Project/walls/walls.obj");
+        floor = new Model("../../models/Project/floor/floor.obj");
+        chair1 = new Model("../../models/Project/chair1/chair1.obj");
 
         enable_lighting();
 
@@ -110,7 +112,9 @@ public:
         }
 
         // todo draw stuff
-        teapot->Draw(*no_shade_shader);
+        walls->Draw(*no_shade_shader);
+        floor->Draw(*no_shade_shader);
+        chair1->Draw(*no_shade_shader);
     }
 
     void toggle_lighting()
@@ -229,7 +233,9 @@ private:
     Cube* lamp1 = nullptr;
     Cube* lamp2 = nullptr;
 
-    Model* teapot = nullptr;
+    Model* walls = nullptr;
+    Model* floor = nullptr;
+    Model* chair1 = nullptr;
 
 };
 
