@@ -2,8 +2,9 @@
 ## Alias OBJ Material File
 # Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
 
-newmtl FrontColor
+newmtl Roofing_Scalloped_Ornate
 Ka 0.000000 0.000000 0.000000
-Kd 1.000000 1.000000 1.000000
+Kd 0.858824 0.364706 0.196078
 Ks 0.330000 0.330000 0.330000
+map_Kd roof/Roofing_Scalloped_Ornate.jpg
 
