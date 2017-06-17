@@ -1,6 +1,6 @@
 # COMP371 Group Project - Summer I 2017
 Jeremy Brown -- ID 27515421
-Devin Mens -- ID // TODO
+Devin Mens -- ID 26290515
 
 
 ## Features
