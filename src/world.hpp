@@ -15,6 +15,7 @@
 #include "track.hpp"
 #include "plane.hpp"
 #include "model.hpp"
+#include "objloader.hpp"
 
 
 class World
@@ -47,6 +48,10 @@ public:
         // Shaders
         no_shade_shader = new Shader("../../shaders/plain.vert", "../../shaders/no_shade.frag");
         col_lighting_shader = new Shader("../../shaders/col_lighting.vert", "../../shaders/col_lighting.frag");
+        texture_shader = new Shader("../../shaders/plain.vert", "../../shaders/transformations.frag");
+
+        skyboxShaderProgram = new Shader("../../shaders/skybox_vertex.shader", "../../shaders/skybox_fragment.shader");
+
 
         // initialize colors
         dark_green_color = glm::vec4(0.2f, 0.4f, 0.0f, 1.0f);
@@ -84,8 +89,43 @@ public:
         walls = new Model("../../models/Project/walls/walls.obj");
         floor = new Model("../../models/Project/floor/floor.obj");
         chair1 = new Model("../../models/Project/chair1/chair1.obj");
+        roof = new Model("../../models/Project/roof/roof.obj");
+
+
+
+
+        loadOBJ("../../models/skybox/cube.obj", skybox_vertices, skybox_normals, skybox_UVs);
+
+        //prepare skybox VAO
+        glGenVertexArrays(1, &skyboxVAO);
+        glBindVertexArray(skyboxVAO);
+
+        glGenBuffers(1, &skyboxVerticesVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, skyboxVerticesVBO);
+        glBufferData(GL_ARRAY_BUFFER, skybox_vertices.size() * sizeof(glm::vec3), &skybox_vertices.front(), GL_STATIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+        glEnableVertexAttribArray(0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glBindVertexArray(0);
 
         enable_lighting();
+
+        active_shader = col_lighting_shader;
+
+
+        vector<const GLchar*> faces;
+        faces.push_back("../../models/skybox/right.jpg");
+        faces.push_back("../../models/skybox/left.jpg");
+        faces.push_back("../../models/skybox/top.jpg");
+        faces.push_back("../../models/skybox/bottom.jpg");
+        faces.push_back("../../models/skybox/back.jpg");
+        faces.push_back("../../models/skybox/front.jpg");
+
+        glActiveTexture(GL_TEXTURE1);
+        GLuint cubemapTexture = loadCubemap(faces);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 
         return 0;
     }
@@ -111,10 +151,46 @@ public:
             ground->draw(view, projection);
         }
 
+
+
         // todo draw stuff
-        walls->Draw(*no_shade_shader);
-        floor->Draw(*no_shade_shader);
-        chair1->Draw(*no_shade_shader);
+//        texture_shader->use();
+//        no_shade_shader->use();
+//        walls->Draw(*col_lighting_shader);
+//        floor->Draw(*col_lighting_shader);
+//        chair1->Draw(*col_lighting_shader);
+
+
+        glm::mat4 view_matrix;
+
+        GLuint projectionLoc = glGetUniformLocation(skyboxShaderProgram->program, "projection_matrix");
+        GLuint viewMatrixLoc = glGetUniformLocation(skyboxShaderProgram->program, "view_matrix");
+        GLuint transformLoc = glGetUniformLocation(skyboxShaderProgram->program, "model_matrix");
+        glm::mat4 projection_matrix = glm::perspective(45.0f, (GLfloat)viewport_height / (GLfloat)viewport_height, 0.1f, 100.0f);
+        //draw skybox
+        skyboxShaderProgram->use();
+        glm::mat4 skybox_view = glm::mat4(glm::mat3(view_matrix)); //remove the translation data
+        glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, glm::value_ptr(skybox_view));
+
+        glUniformMatrix4fv(glGetUniformLocation(skyboxShaderProgram->program, "view_matrix"), 1, GL_FALSE, glm::value_ptr(skybox_view));
+        glUniformMatrix4fv(glGetUniformLocation(skyboxShaderProgram->program, "projection_matrix"), 1, GL_FALSE, glm::value_ptr(projection_matrix));
+
+        glUniform1i(glGetUniformLocation(skyboxShaderProgram->program, "skyboxTexture"), 1); //use texture unit 1
+
+        glDepthMask(GL_FALSE);
+        glBindVertexArray(skyboxVAO);
+        glDrawArrays(GL_TRIANGLES, 0, skybox_vertices.size());
+        glBindVertexArray(0);
+
+        glDepthMask(GL_TRUE);
+
+        col_lighting_shader->use();
+//
+        walls->Draw(*texture_shader);
+        floor->Draw(*texture_shader);
+        chair1->Draw(*texture_shader);
+        roof->Draw(*texture_shader);
+
     }
 
     void toggle_lighting()
@@ -203,6 +279,35 @@ public:
         // TODO ?
     }
 
+    GLuint loadCubemap(vector<const GLchar*> faces)
+    {
+        GLuint textureID;
+        glGenTextures(1, &textureID);
+
+        int width, height;
+        unsigned char* image;
+
+        glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+        for (GLuint i = 0; i < faces.size(); i++)
+        {
+            image = SOIL_load_image(faces[i], &width, &height, 0, SOIL_LOAD_RGB);
+            glTexImage2D(
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
+                    GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image
+            );
+
+            SOIL_free_image_data(image); //free resources
+        }
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+        return textureID;
+    }
+
 private:
     Camera* camera = nullptr;
     bool lights_on = true;
@@ -229,6 +334,9 @@ private:
 
     Shader* col_lighting_shader = nullptr;
     Shader* no_shade_shader = nullptr;
+    Shader* texture_shader = nullptr;
+    Shader* active_shader = nullptr;
+    Shader* skyboxShaderProgram = nullptr;
     Plane* ground = nullptr;
     Cube* lamp1 = nullptr;
     Cube* lamp2 = nullptr;
@@ -236,6 +344,12 @@ private:
     Model* walls = nullptr;
     Model* floor = nullptr;
     Model* chair1 = nullptr;
+    Model* roof = nullptr;
+    Model* skybox = nullptr;
+    GLuint skyboxVAO, skyboxVerticesVBO;
+    std::vector<glm::vec3> skybox_vertices;
+    std::vector<glm::vec3> skybox_normals; //unused
+    std::vector<glm::vec2> skybox_UVs; //unused
 
 };
 

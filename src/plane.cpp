@@ -69,7 +69,7 @@ void Plane::draw(glm::mat4 &view, glm::mat4 &projection)
 
     // draw line
     glUniformMatrix4fv(glGetUniformLocation(shader.program, "model"), 1, GL_FALSE, glm::value_ptr(transform_matrix));
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+//    glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 }
 
