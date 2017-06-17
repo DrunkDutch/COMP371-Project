@@ -17,11 +17,14 @@ set(LIBS ${LIBS} ${ASSIMP_LIBRARIES})
 
 
 # Setup conan lib locations
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/build/conanbuildinfo.cmake)  # Clion, with conanbuildinfo.cmake in build folder
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/build/conanbuildinfo.cmake)  # Clion, with conanbuildinfo.cmake in build directory
     include(${CMAKE_CURRENT_SOURCE_DIR}/build/conanbuildinfo.cmake)
     conan_basic_setup()
 elseif(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)  # Not CLion
     include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup()
+elseif(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)  # Look in .conan directory
+    include(.conan/conanbuildinfo.cmake)
     conan_basic_setup()
 else()
     message(WARNING "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first")
@@ -35,9 +38,6 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
     file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake"
             "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
-
-include(.conan/conanbuildinfo.cmake)
-
 
 
 set(SOURCE_FILES src/main.cpp src/shader.hpp src/camera.hpp src/world.hpp src/window.hpp src/input.hpp src/geo_obj.hpp src/track.hpp src/track.cpp src/plane.cpp src/plane.hpp src/cube.hpp src/model.hpp src/mesh.hpp src/objloader.hpp src/objloader.cpp)

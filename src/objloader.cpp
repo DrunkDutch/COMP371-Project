@@ -5,16 +5,14 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
+#include <iostream>
 
 #include "objloader.hpp"
 
 #pragma warning(disable:4996)
 
-bool loadOBJ(
-	const char * path,
-	std::vector<glm::vec3> & out_vertices,
-	std::vector<glm::vec3> & out_normals,
-	std::vector<glm::vec2> & out_uvs) {
+bool loadOBJ(const char* path, std::vector<glm::vec3> &out_vertices, std::vector<glm::vec3> &out_normals,
+	std::vector<glm::vec2>& out_uvs) {
 
 	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 	std::vector<glm::vec3> temp_vertices;
@@ -23,14 +21,13 @@ bool loadOBJ(
 
 	FILE * file = fopen(path, "r");
 	if (file == NULL) {
-		printf("Impossible to open the file ! Are you in the right path ?\n");
-        printf(path);
+		std::cout << "Impossible to open the file ! Are you in the right path ?" << std::endl;
+        std::cout << path << std::endl;
 		getchar();
 		return false;
 	}
 
 	while (1) {
-
 		char lineHeader[128];
 		// read the first word of the line
 		int res = fscanf(file, "%s", lineHeader);
