@@ -35,7 +35,7 @@ vec3 calc_dir_light(Light light, vec3 norm, vec3 viewDir)
         return vec3(0, 0, 0);
     } else {
         // ambient light
-        vec3 ambient = vec3(1.0f,0,0) * texture(material.diffuse, TexCoords).rgb;
+        vec3 ambient = vec3(0.439f,0.259f,0.078f) * texture(material.diffuse, TexCoords).rgb;
 
         // diffuse light
         vec3 lightDir = normalize(light.position - FragPos);
