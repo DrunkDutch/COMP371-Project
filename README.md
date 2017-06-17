@@ -8,6 +8,7 @@ Devin Mens -- ID 26290515
 
 ## Controls
 - Toggling lights: Press `1`, `2`, or `3` to toggle lighting in that particular room.
+- Toggling shaders: Press `T` to toggle between model shaders (Might have to retoggle lights after).
 
 ## Code Usage
 Certain code snippets were borrowed from [LearnOpenGL](https://learnopengl.com). These include the `Camera` class and the `Shader` class (equivalent to the template code given in the lab to read shader files). 
