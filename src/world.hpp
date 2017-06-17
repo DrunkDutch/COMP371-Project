@@ -73,7 +73,7 @@ public:
         shininess = 32;
 
         // create camera
-        camera = new Camera(glm::vec3(2.0f, 2.0f, 100.0f));
+        camera = new Camera(glm::vec3(10.0f, 20.0f, 0.0f));
 
         // create ground
         ground = new Plane(glm::vec3(0.0f, 0.0f, 0.0f), 800, 800, *col_lighting_shader);
