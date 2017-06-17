@@ -42,6 +42,7 @@ conan_cmake_run(CONANFILE conanfile.txt  # or relative build/conanfile.txt
         BUILD missing)
 
 
-set(SOURCE_FILES src/main.cpp src/shader.hpp src/camera.hpp src/world.hpp src/window.hpp src/input.hpp src/geo_obj.hpp src/track.hpp src/track.cpp src/plane.cpp src/plane.hpp src/cube.hpp src/model.hpp src/mesh.hpp)
+
+set(SOURCE_FILES src/main.cpp src/shader.hpp src/camera.hpp src/world.hpp src/window.hpp src/input.hpp src/geo_obj.hpp src/track.hpp src/track.cpp src/plane.cpp src/plane.hpp src/cube.hpp src/model.hpp src/mesh.hpp src/objloader.hpp src/objloader.cpp)
 add_executable(comp371-project ${SOURCE_FILES})
 target_link_libraries(comp371-project ${CONAN_LIBS} ${LIBS})
