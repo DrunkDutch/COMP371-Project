@@ -49,8 +49,11 @@ public:
         no_shade_shader = new Shader("../../shaders/no_shade.vert", "../../shaders/no_shade.frag");
         col_lighting_shader = new Shader("../../shaders/col_lighting.vert", "../../shaders/col_lighting.frag");
         texture_shader = new Shader("../../shaders/transformations.vert", "../../shaders/transformations.frag");
+        col_lighting_shader_v2 = new Shader("../../shaders/col_lighting.vert", "../../shaders/col_lighting_v2.frag");
 
         skyboxShaderProgram = new Shader("../../shaders/skybox_vertex.shader", "../../shaders/skybox_fragment.shader");
+
+        active_shader = col_lighting_shader;
 
 
         // initialize colors
@@ -65,7 +68,7 @@ public:
         camera = new Camera(glm::vec3(10.0f, 20.0f, 0.0f));
 
         // create ground
-        ground = new Plane(glm::vec3(0.0f, 0.0f, 0.0f), 800, 800, *col_lighting_shader);
+        ground = new Plane(glm::vec3(0.0f, 0.0f, 0.0f), 800, 800, *active_shader);
         ground->set_color(dark_green_color);
 
         // create lamps
@@ -76,9 +79,9 @@ public:
         lamp3 = new Cube(glm::vec3(10.0f, 10.0f, 0.0f), *no_shade_shader);
         lamp3->set_color(white_color);
 
-        col_lighting_shader->use();
-        col_lighting_shader->set_int("material.diffuse", 0);
-        col_lighting_shader->set_int("material.specular", 1);
+        active_shader->use();
+        active_shader->set_int("material.diffuse", 0);
+        active_shader->set_int("material.specular", 1);
 
         // create models
         walls = new Model("../../models/Project/walls/walls.obj");
@@ -136,10 +139,17 @@ public:
 
     void draw(GLfloat delta_time, GLenum polygon_mode)
     {
+
         // clear drawing surface
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glPolygonMode(GL_FRONT_AND_BACK, polygon_mode);
+
+        active_shader->use();
+        active_shader->set_int("material.diffuse", 0);
+        active_shader->set_int("material.specular", 1);
+        ground = new Plane(glm::vec3(0.0f, 0.0f, 0.0f), 800, 800, *active_shader);
+
 
         // camera view
         glm::mat4 view = camera->GetViewMatrix();
@@ -188,7 +198,7 @@ public:
 
         glDepthMask(GL_TRUE);
 
-        col_lighting_shader->use();
+        active_shader->use();
 //
         walls->Draw(*texture_shader);
         floor->Draw(*texture_shader);
@@ -240,6 +250,17 @@ public:
         }
     }
 
+    void toggle_shader(){
+        if (shader == 0){
+            active_shader = col_lighting_shader_v2;
+            shader = 1;
+        }
+        else{
+            active_shader = col_lighting_shader;
+            shader = 0;
+        }
+    }
+
     void disable_lighting(int room_number)
     {
         // disable light
@@ -275,31 +296,31 @@ public:
         lamp2->draw(view, projection);
         lamp3->draw(view, projection);
 
-        col_lighting_shader->use();
-        col_lighting_shader->set_vec3("viewPos", camera_pos);
+        active_shader->use();
+        active_shader->set_vec3("viewPos", camera_pos);
 
         // light positions
-        col_lighting_shader->set_vec3("light1.position", lamp1->get_position());
-        col_lighting_shader->set_vec3("light2.position", lamp2->get_position());
-        col_lighting_shader->set_vec3("light3.position", lamp3->get_position());
+        active_shader->set_vec3("light1.position", lamp1->get_position());
+        active_shader->set_vec3("light2.position", lamp2->get_position());
+        active_shader->set_vec3("light3.position", lamp3->get_position());
 
         // light properties
         glm::vec3 ambient_vec = glm::vec3(0.2f, 0.2f, 0.2f);
         glm::vec3 diffuse_vec = glm::vec3(0.5f, 0.5f, 0.5f);
         glm::vec3 specular_vec = glm::vec3(1.0f, 1.0f, 1.0f);
 
-        col_lighting_shader->set_vec3("light1.ambient", ambient_vec);
-        col_lighting_shader->set_vec3("light1.diffuse", diffuse_vec);
-        col_lighting_shader->set_vec3("light1.specular", specular_vec);
-        col_lighting_shader->set_vec3("light2.ambient", ambient_vec);
-        col_lighting_shader->set_vec3("light2.diffuse", diffuse_vec);
-        col_lighting_shader->set_vec3("light2.specular", specular_vec);
-        col_lighting_shader->set_vec3("light3.ambient", ambient_vec);
-        col_lighting_shader->set_vec3("light3.diffuse", diffuse_vec);
-        col_lighting_shader->set_vec3("light3.specular", specular_vec);
+        active_shader->set_vec3("light1.ambient", ambient_vec);
+        active_shader->set_vec3("light1.diffuse", diffuse_vec);
+        active_shader->set_vec3("light1.specular", specular_vec);
+        active_shader->set_vec3("light2.ambient", ambient_vec);
+        active_shader->set_vec3("light2.diffuse", diffuse_vec);
+        active_shader->set_vec3("light2.specular", specular_vec);
+        active_shader->set_vec3("light3.ambient", ambient_vec);
+        active_shader->set_vec3("light3.diffuse", diffuse_vec);
+        active_shader->set_vec3("light3.specular", specular_vec);
 
         // material properties
-        col_lighting_shader->set_float("material.shininess", 64.0f);
+        active_shader->set_float("material.shininess", 64.0f);
     }
 
     void reset()
@@ -351,9 +372,11 @@ private:
     int viewport_width;
 
     Shader* col_lighting_shader = nullptr;
+    Shader* col_lighting_shader_v2 = nullptr;
     Shader* no_shade_shader = nullptr;
     Shader* texture_shader = nullptr;
     Shader* skyboxShaderProgram = nullptr;
+    Shader* active_shader = nullptr;
     Plane* ground = nullptr;
     Cube* lamp1 = nullptr;
     Cube* lamp2 = nullptr;
@@ -382,6 +405,7 @@ private:
     std::vector<glm::vec3> skybox_vertices;
     std::vector<glm::vec3> skybox_normals; //unused
     std::vector<glm::vec2> skybox_UVs; //unused
+    int shader = 0;
 
 };
 

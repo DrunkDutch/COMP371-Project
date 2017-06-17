@@ -152,7 +152,10 @@ public:
             world->toggle_lighting(2);
         } else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
             world->toggle_lighting(3);
+        } else if (key == GLFW_KEY_T && action == GLFW_PRESS){
+            world->toggle_shader();
         }
+
 
         // handle pressed keys over time
         if (key >= 0 && key < 1024) {
