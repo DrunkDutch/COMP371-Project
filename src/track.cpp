@@ -291,7 +291,8 @@ void Track::draw(glm::mat4 &view, glm::mat4 &projection)
 
     glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(shader.program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-    glUniform3f(glGetUniformLocation(shader.program, "fragColor"), frag_color.r, frag_color.g, frag_color.b);
+    glUniform4f(glGetUniformLocation(shader.program, "fragColor"), frag_color.r, frag_color.g, frag_color.b,
+                frag_color.a);
 
     // draw line
     glUniformMatrix4fv(glGetUniformLocation(shader.program, "model"), 1, GL_FALSE, glm::value_ptr(transform_matrix));

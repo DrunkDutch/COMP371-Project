@@ -59,11 +59,7 @@ public:
 
         // initialize colors
         dark_green_color = glm::vec4(0.2f, 0.4f, 0.0f, 1.0f);
-        black_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
         white_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-        brown_color = glm::vec4(0.4f, 0.2f, 0.0f, 1.0f);  // 102r 51g 0b
-        red_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        blue_color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
         // create camera
         camera = new Camera(glm::vec3(10.0f, 20.0f, 0.0f));
@@ -159,24 +155,12 @@ public:
         glm::mat4 projection = glm::perspective(camera->Zoom, (float) viewport_width / viewport_height, 0.1f,
                                                 1000.0f);
 
-        // set light levels & draw lamps
-        do_lighting(view, projection, camera->Position);
-
         // draw ground
         if (ground != nullptr) {
             ground->draw(view, projection);
         }
 
-
-
-        // todo draw stuff
-//        texture_shader->use();
-//        no_shade_shader->use();
-//        walls->Draw(*col_lighting_shader);
-//        floor->Draw(*col_lighting_shader);
-//        chair1->Draw(*col_lighting_shader);
-
-
+        // skybox
         glm::mat4 view_matrix;
 
         GLint projectionLoc = glGetUniformLocation(skyboxShaderProgram->program, "projection_matrix");
@@ -191,7 +175,7 @@ public:
         glUniformMatrix4fv(glGetUniformLocation(skyboxShaderProgram->program, "view_matrix"), 1, GL_FALSE, glm::value_ptr(skybox_view));
         glUniformMatrix4fv(glGetUniformLocation(skyboxShaderProgram->program, "projection_matrix"), 1, GL_FALSE, glm::value_ptr(projection_matrix));
 
-        glUniform1i(glGetUniformLocation(skyboxShaderProgram->program, "skyboxTexture"), 1); //use texture unit 1
+        glUniform1i(glGetUniformLocation(skyboxShaderProgram->program, "skyboxTexture"), 1);  // use texture unit 1
 
         glDepthMask(GL_FALSE);
         glBindVertexArray(skyboxVAO);
@@ -200,8 +184,12 @@ public:
 
         glDepthMask(GL_TRUE);
 
+        // set light levels & draw lamps
+        do_lighting(view, projection, camera->Position);
+
+        // draw objects
         active_shader->use();
-//
+
         walls->Draw(*texture_shader);
         floor->Draw(*texture_shader);
         chair1->Draw(*texture_shader);
@@ -333,11 +321,7 @@ private:
     Camera* camera = nullptr;
 
     glm::vec4 dark_green_color;
-    glm::vec4 black_color;
     glm::vec4 white_color;
-    glm::vec4 brown_color;
-    glm::vec4 red_color;
-    glm::vec4 blue_color;
 
     int viewport_height;
     int viewport_width;
