@@ -95,7 +95,20 @@ public:
         floor = new Model("../../models/Project/floor/floor.obj");
         chair1 = new Model("../../models/Project/chair1/chair1.obj");
         roof = new Model("../../models/Project/roof/roof.obj");
-
+        chair1b = new Model("../../models/Project/chair1b/chair1b.obj");
+        chair2 = new Model("../../models/Project/chair2/chair2.obj");
+        chair2b = new Model("../../models/Project/chair2b/chair2b.obj");
+        chair3 = new Model("../../models/Project/chair3/chair3.obj");
+        chair3b = new Model("../../models/Project/chair3b/chair3b.obj");
+        couch1 = new Model("../../models/Project/couch1/couch1.obj");
+        couch2 = new Model("../../models/Project/couch2/couch2.obj");
+        couch3 = new Model("../../models/Project/couch3/couch3.obj");
+        shelf1 = new Model("../../models/Project/shelf1/shelf1.obj");
+        shelf2 = new Model("../../models/Project/shelf2/shelf2.obj");
+        shelf3 = new Model("../../models/Project/shelf3/shelf3.obj");
+        table1 = new Model("../../models/Project/table1/table1.obj");
+        table2 = new Model("../../models/Project/table2/table2.obj");
+        table3 = new Model("../../models/Project/table3/table3.obj");
         loadOBJ("../../models/skybox/cube.obj", skybox_vertices, skybox_normals, skybox_UVs);
 
         //prepare skybox VAO
@@ -192,6 +205,20 @@ public:
         floor->Draw(*texture_shader);
         chair1->Draw(*texture_shader);
         roof->Draw(*texture_shader);
+        chair1b->Draw(*texture_shader);
+        chair2->Draw(*texture_shader);
+        chair2b->Draw(*texture_shader);
+        chair3->Draw(*texture_shader);
+        chair3b->Draw(*texture_shader);
+        couch1->Draw(*texture_shader);
+        couch2->Draw(*texture_shader);
+        couch3->Draw(*texture_shader);
+        shelf1->Draw(*texture_shader);
+        shelf2->Draw(*texture_shader);
+        shelf3->Draw(*texture_shader);
+        table1->Draw(*texture_shader);
+        table2->Draw(*texture_shader);
+        table3->Draw(*texture_shader);
 
     }
 
@@ -345,7 +372,21 @@ private:
     Model* floor = nullptr;
     Model* chair1 = nullptr;
     Model* roof = nullptr;
-    Model* skybox = nullptr;
+    Model* chair1b = nullptr;
+    Model* chair2 = nullptr;
+    Model* chair2b = nullptr;
+    Model* chair3 = nullptr;
+    Model* chair3b = nullptr;
+    Model* couch1 = nullptr;
+    Model* couch2 = nullptr;
+    Model* couch3 = nullptr;
+    Model* shelf1 = nullptr;
+    Model* shelf2 = nullptr;
+    Model* shelf3 = nullptr;
+    Model* table1 = nullptr;
+    Model* table2 = nullptr;
+    Model* table3 = nullptr;
+
     GLuint skyboxVAO, skyboxVerticesVBO;
     std::vector<glm::vec3> skybox_vertices;
     std::vector<glm::vec3> skybox_normals; //unused
