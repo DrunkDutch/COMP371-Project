@@ -12,7 +12,7 @@ struct Material {
 
 struct Light {
     vec3 position;
-
+    bool enabled;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -21,9 +21,6 @@ struct Light {
 in vec3 Normal;
 in vec3 FragPos;
 in vec2 TexCoords;
-
-uniform float ambientStrength;
-uniform vec3 ambientLightColor;
 
 uniform vec3 viewPos;
 uniform Material material;
@@ -34,20 +31,24 @@ uniform Light light3;
 
 vec3 calc_dir_light(Light light, vec3 norm, vec3 viewDir)
 {
-    // ambient light
-    vec3 ambient = light.ambient * texture(material.diffuse, TexCoords).rgb;
+    if (!light.enabled) {
+        return vec3(0, 0, 0);
+    } else {
+        // ambient light
+        vec3 ambient = light.ambient * texture(material.diffuse, TexCoords).rgb;
 
-    // diffuse light
-    vec3 lightDir = normalize(light.position - FragPos);
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoords).rgb;
+        // diffuse light
+        vec3 lightDir = normalize(light.position - FragPos);
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoords).rgb;
 
-    // specular light
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * texture(material.specular, TexCoords).rgb;
+        // specular light
+        vec3 reflectDir = reflect(-lightDir, norm);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+        vec3 specular = light.specular * spec * texture(material.specular, TexCoords).rgb;
 
-    return (ambient + diffuse + specular);
+        return (ambient + diffuse + specular);
+    }
 }
 
 void main()

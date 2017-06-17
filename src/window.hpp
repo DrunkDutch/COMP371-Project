@@ -146,11 +146,12 @@ public:
 //        }
 
         // world or axis rotation
-        if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
-            // enter key
-            world->toggle_lighting();
-        } else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-            // space key
+        if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+            world->toggle_lighting(1);
+        } else if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+            world->toggle_lighting(2);
+        } else if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+            world->toggle_lighting(3);
         }
 
         // handle pressed keys over time

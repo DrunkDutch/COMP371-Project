@@ -46,6 +46,7 @@ public:
         catch (std::ifstream::failure e)
         {
             std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+            std::cout << vertexPath << " " << fragmentPath << std::endl;
         }
         const GLchar* vShaderCode = vertexCode.c_str();
         const GLchar * fShaderCode = fragmentCode.c_str();
@@ -63,6 +64,7 @@ public:
         {
             glGetShaderInfoLog(vertex, 512, NULL, infoLog);
             std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+            std::cout << vertexPath << " " << fragmentPath << std::endl;
         }
         // Fragment Shader
         fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -74,6 +76,7 @@ public:
         {
             glGetShaderInfoLog(fragment, 512, NULL, infoLog);
             std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+            std::cout << vertexPath << " " << fragmentPath << std::endl;
         }
         // Shader Program
         this->program = glCreateProgram();
@@ -86,6 +89,7 @@ public:
         {
             glGetProgramInfoLog(this->program, 512, NULL, infoLog);
             std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+            std::cout << vertexPath << " " << fragmentPath << std::endl;
         }
         // Delete the shaders as they're linked into our program now and no longer necessery
         glDeleteShader(vertex);
@@ -115,6 +119,12 @@ public:
     {
         GLint i_uloc = glGetUniformLocation(this->program, i_name.c_str());
         glUniform1i(i_uloc, i);
+    }
+
+    void set_bool(const std::string &b_name, bool b)
+    {
+        GLint b_uloc = glGetUniformLocation(this->program, b_name.c_str());
+        glUniform1i(b_uloc, (int) b);
     }
 };
 

@@ -7,7 +7,7 @@ Devin Mens -- ID 26290515
 // TODO
 
 ## Controls
-// TODO
+- Toggling lights: Press `1`, `2`, or `3` to toggle lighting in that particular room.
 
 ## Code Usage
 Certain code snippets were borrowed from [LearnOpenGL](https://learnopengl.com). These include the `Camera` class and the `Shader` class (equivalent to the template code given in the lab to read shader files). 
