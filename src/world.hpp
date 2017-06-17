@@ -67,8 +67,7 @@ public:
         lamp_light_color = glm::vec3(white_color);
         lamp1_light_strength = 0.3f;
         lamp2_light_strength = 1.0f;
-        cam_light_color = glm::vec3(white_color);
-        cam_light_strength = 0.5f;
+        lamp2_light_strength = 0.5f;
         specular_strength = 0.5f;
         shininess = 32;
 
@@ -84,15 +83,18 @@ public:
         lamp1->set_color(white_color);
         lamp2 = new Cube(glm::vec3(-300.0f, 50.0f, 0.0f), *no_shade_shader);
         lamp2->set_color(white_color);
+        lamp3 = new Cube(glm::vec3(10.0f, 10.0f, 0.0f), *no_shade_shader);
+        lamp3->set_color(white_color);
+
+        col_lighting_shader->use();
+        col_lighting_shader->set_int("material.diffuse", 0);
+        col_lighting_shader->set_int("material.specular", 1);
 
         // create teapot
         walls = new Model("../../models/Project/walls/walls.obj");
         floor = new Model("../../models/Project/floor/floor.obj");
         chair1 = new Model("../../models/Project/chair1/chair1.obj");
         roof = new Model("../../models/Project/roof/roof.obj");
-
-
-
 
         loadOBJ("../../models/skybox/cube.obj", skybox_vertices, skybox_normals, skybox_UVs);
 
@@ -163,9 +165,9 @@ public:
 
         glm::mat4 view_matrix;
 
-        GLuint projectionLoc = glGetUniformLocation(skyboxShaderProgram->program, "projection_matrix");
-        GLuint viewMatrixLoc = glGetUniformLocation(skyboxShaderProgram->program, "view_matrix");
-        GLuint transformLoc = glGetUniformLocation(skyboxShaderProgram->program, "model_matrix");
+        GLint projectionLoc = glGetUniformLocation(skyboxShaderProgram->program, "projection_matrix");
+        GLint viewMatrixLoc = glGetUniformLocation(skyboxShaderProgram->program, "view_matrix");
+        GLint transformLoc = glGetUniformLocation(skyboxShaderProgram->program, "model_matrix");
         glm::mat4 projection_matrix = glm::perspective(45.0f, (GLfloat)viewport_height / (GLfloat)viewport_height, 0.1f, 100.0f);
         //draw skybox
         skyboxShaderProgram->use();
@@ -209,20 +211,18 @@ public:
     {
         // set light color to white
         lamp_light_color = glm::vec3(white_color);
-        cam_light_color = glm::vec3(white_color);
         lamp1->set_color(white_color);
         lamp2->set_color(white_color);
-        std::cout << "ON!" << std::endl;
+        lamp3->set_color(white_color);
     }
 
     void disable_lighting()
     {
         // set light color to black
         lamp_light_color = glm::vec3(black_color);
-        cam_light_color = glm::vec3(black_color);
         lamp1->set_color(black_color);
         lamp2->set_color(black_color);
-        std::cout << "OFF!" << std::endl;
+        lamp3->set_color(black_color);
     }
 
     Camera* get_camera()
@@ -240,33 +240,33 @@ public:
     {
         lamp1->draw(view, projection);
         lamp2->draw(view, projection);
+        lamp3->draw(view, projection);
 
         col_lighting_shader->use();
-        GLint view_pos_uloc = glGetUniformLocation(col_lighting_shader->program, "viewPos");
-        glUniform3f(view_pos_uloc, camera_pos.x, camera_pos.y, camera_pos.z);
+        col_lighting_shader->set_vec3("viewPos", camera_pos);
 
-        GLint ambient_strength_uloc = glGetUniformLocation(col_lighting_shader->program, "ambientStrength");
-        glUniform1f(ambient_strength_uloc, ambient_light_level);
-        GLint ambient_light_color_uloc = glGetUniformLocation(col_lighting_shader->program, "ambientLightColor");
-        glUniform3f(ambient_light_color_uloc, ambient_light_color.r, ambient_light_color.g, ambient_light_color.b);
-        GLint lamp_light_color_uloc = glGetUniformLocation(col_lighting_shader->program, "lampLightColor");
-        glUniform3f(lamp_light_color_uloc, lamp_light_color.r, lamp_light_color.g, lamp_light_color.b);
-        GLint cam_light_color_uloc = glGetUniformLocation(col_lighting_shader->program, "cameraLightColor");
-        glUniform3f(cam_light_color_uloc, cam_light_color.r, cam_light_color.g, cam_light_color.b);
+        // light positions
+        col_lighting_shader->set_vec3("light1.position", lamp1->get_position());
+        col_lighting_shader->set_vec3("light2.position", lamp2->get_position());
+        col_lighting_shader->set_vec3("light3.position", lamp3->get_position());
 
-        GLint lamp1_light_strength_uloc = glGetUniformLocation(col_lighting_shader->program, "lamp1LightStrength");
-        glUniform1f(lamp1_light_strength_uloc, lamp1_light_strength);
-        GLint lamp2_light_strength_uloc = glGetUniformLocation(col_lighting_shader->program, "lamp2LightStrength");
-        glUniform1f(lamp2_light_strength_uloc, lamp2_light_strength);
-        GLint cam_light_strength_uloc = glGetUniformLocation(col_lighting_shader->program, "cameraLightStrength");
-        glUniform1f(cam_light_strength_uloc, cam_light_strength);
+        // light properties
+        glm::vec3 ambient_vec = glm::vec3(0.2f, 0.2f, 0.2f);
+        glm::vec3 diffuse_vec = glm::vec3(0.5f, 0.5f, 0.5f);
+        glm::vec3 specular_vec = glm::vec3(1.0f, 1.0f, 1.0f);
 
-        GLint lamp1_pos_uloc = glGetUniformLocation(col_lighting_shader->program, "lamp1Pos");
-        glm::vec3 lamp1_pos = lamp1->get_position();
-        glUniform3f(lamp1_pos_uloc, lamp1_pos.x, lamp1_pos.y, lamp1_pos.z);
-        GLint lamp2_pos_uloc = glGetUniformLocation(col_lighting_shader->program, "lamp2Pos");
-        glm::vec3 lamp2_pos = lamp2->get_position();
-        glUniform3f(lamp2_pos_uloc, lamp2_pos.x, lamp2_pos.y, lamp2_pos.z);
+        col_lighting_shader->set_vec3("light1.ambient", ambient_vec);
+        col_lighting_shader->set_vec3("light1.diffuse", diffuse_vec);
+        col_lighting_shader->set_vec3("light1.specular", specular_vec);
+        col_lighting_shader->set_vec3("light2.ambient", ambient_vec);
+        col_lighting_shader->set_vec3("light2.diffuse", diffuse_vec);
+        col_lighting_shader->set_vec3("light2.specular", specular_vec);
+        col_lighting_shader->set_vec3("light3.ambient", ambient_vec);
+        col_lighting_shader->set_vec3("light3.diffuse", diffuse_vec);
+        col_lighting_shader->set_vec3("light3.specular", specular_vec);
+
+        // material properties
+        col_lighting_shader->set_float("material.shininess", 64.0f);
 
         GLint specular_strength_uloc = glGetUniformLocation(col_lighting_shader->program, "specularStrength");
         glUniform1f(specular_strength_uloc, specular_strength);
@@ -324,8 +324,7 @@ private:
     glm::vec3 lamp_light_color;
     GLfloat lamp1_light_strength;
     GLfloat lamp2_light_strength;
-    glm::vec3 cam_light_color;
-    GLfloat cam_light_strength;
+    GLfloat lamp3_light_strength;
     GLfloat specular_strength;
     GLint shininess;
 
@@ -340,6 +339,7 @@ private:
     Plane* ground = nullptr;
     Cube* lamp1 = nullptr;
     Cube* lamp2 = nullptr;
+    Cube* lamp3 = nullptr;
 
     Model* walls = nullptr;
     Model* floor = nullptr;

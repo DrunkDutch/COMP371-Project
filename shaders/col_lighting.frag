@@ -4,41 +4,50 @@
 
 out vec4 FragColor;
 
+struct Material {
+    sampler2D diffuse;
+    sampler2D specular;
+    float shininess;
+};
+
+struct Light {
+    vec3 position;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
 in vec3 Normal;
 in vec3 FragPos;
+in vec2 TexCoords;
 
 uniform float ambientStrength;
 uniform vec3 ambientLightColor;
 
-uniform vec3 lamp1Pos;
-uniform vec3 lamp2Pos;
 uniform vec3 viewPos;
-uniform vec3 lampLightColor;
-uniform float lamp1LightStrength;
-uniform float lamp2LightStrength;
-uniform vec3 cameraLightColor;
-uniform float cameraLightStrength;
-uniform vec3 objectColor;
-
-uniform float specularStrength;
-uniform int shininess;
+uniform Material material;
+uniform Light light1;
+uniform Light light2;
+uniform Light light3;
 
 
-vec3 calc_dir_light(vec3 light_pos, float light_strength, vec3 light_color)
+vec3 calc_dir_light(Light light, vec3 norm, vec3 viewDir)
 {
+    // ambient light
+    vec3 ambient = light.ambient * texture(material.diffuse, TexCoords).rgb;
+
     // diffuse light
-    vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(light_pos - FragPos);
+    vec3 lightDir = normalize(light.position - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = light_strength * diff * light_color;
+    vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoords).rgb;
 
     // specular light
-    vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    vec3 specular = specularStrength * spec * light_color;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    vec3 specular = light.specular * spec * texture(material.specular, TexCoords).rgb;
 
-    return (diffuse + specular);
+    return (ambient + diffuse + specular);
 }
 
 void main()
@@ -46,18 +55,15 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
-    // ambient light
-    vec3 ambient = ambientStrength * ambientLightColor;
-
     // lamp 1 light
-    vec3 lamp1_dir_light = calc_dir_light(lamp1Pos, lamp1LightStrength, lampLightColor);
+    vec3 lamp1_dir_light = calc_dir_light(light1, norm, viewDir);
 
     // lamp 2 light
-    vec3 lamp2_dir_light = calc_dir_light(lamp2Pos, lamp2LightStrength, lampLightColor);
+    vec3 lamp2_dir_light = calc_dir_light(light2, norm, viewDir);
 
-    // camera-tracking light
-    vec3 camera_dir_light = calc_dir_light(viewPos, cameraLightStrength, cameraLightColor);
+    // lamp 3 light
+    vec3 lamp3_dir_light = calc_dir_light(light3, norm, viewDir);
 
-    vec3 result = (ambient + lamp1_dir_light + lamp2_dir_light + camera_dir_light) * objectColor;
+    vec3 result = (lamp1_dir_light + lamp2_dir_light + lamp3_dir_light);
     FragColor = vec4(result, 1.0);
 }

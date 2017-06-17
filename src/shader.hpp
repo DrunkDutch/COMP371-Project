@@ -97,6 +97,25 @@ public:
     {
         glUseProgram(this->program);
     }
+
+
+    void set_vec3(const std::string &vec_name, glm::vec3 vec)
+    {
+        GLint vec_uloc = glGetUniformLocation(this->program, vec_name.c_str());
+        glUniform3f(vec_uloc, vec.x, vec.y, vec.z);
+    }
+
+    void set_float(const std::string &f_name, float f)
+    {
+        GLint f_uloc = glGetUniformLocation(this->program, f_name.c_str());
+        glUniform1f(f_uloc, f);
+    }
+
+    void set_int(const std::string &i_name, int i)
+    {
+        GLint i_uloc = glGetUniformLocation(this->program, i_name.c_str());
+        glUniform1i(i_uloc, i);
+    }
 };
 
 
