@@ -102,6 +102,7 @@ public:
         table1 = new Model("../../models/Project/table1/table1.obj");
         table2 = new Model("../../models/Project/table2/table2.obj");
         table3 = new Model("../../models/Project/table3/table3.obj");
+        lamps = new Model("../../models/Project/lamps/lamps.obj");
         loadOBJ("../../models/skybox/cube.obj", skybox_vertices, skybox_normals, skybox_UVs);
 
         //prepare skybox VAO
@@ -218,6 +219,7 @@ public:
         table1->Draw(*texture_shader);
         table2->Draw(*texture_shader);
         table3->Draw(*texture_shader);
+        lamps->Draw(*texture_shader);
 
     }
 
@@ -400,6 +402,7 @@ private:
     Model* table1 = nullptr;
     Model* table2 = nullptr;
     Model* table3 = nullptr;
+    Model* lamps = nullptr;
 
     GLuint skyboxVAO, skyboxVerticesVBO;
     std::vector<glm::vec3> skybox_vertices;
