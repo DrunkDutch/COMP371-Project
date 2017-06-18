@@ -16,6 +16,7 @@
 #include "plane.hpp"
 #include "model.hpp"
 #include "objloader.hpp"
+#include "lamp.h"
 
 
 class World
@@ -58,11 +59,7 @@ public:
 
         // initialize colors
         dark_green_color = glm::vec4(0.2f, 0.4f, 0.0f, 1.0f);
-        black_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
         white_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-        brown_color = glm::vec4(0.4f, 0.2f, 0.0f, 1.0f);  // 102r 51g 0b
-        red_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        blue_color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
         // create camera
         camera = new Camera(glm::vec3(10.0f, 20.0f, 0.0f));
@@ -72,11 +69,11 @@ public:
         ground->set_color(dark_green_color);
 
         // create lamps
-        lamp1 = new Cube(glm::vec3(300.0f, 15.0f, 0.0f), *no_shade_shader);
+        lamp1 = new Lamp(glm::vec3(22.0f, 15.0f, -185.0f), *no_shade_shader);
         lamp1->set_color(white_color);
-        lamp2 = new Cube(glm::vec3(-300.0f, 50.0f, 0.0f), *no_shade_shader);
+        lamp2 = new Lamp(glm::vec3(88.0f, 15.0f, -108.0f), *no_shade_shader);
         lamp2->set_color(white_color);
-        lamp3 = new Cube(glm::vec3(10.0f, 10.0f, 0.0f), *no_shade_shader);
+        lamp3 = new Lamp(glm::vec3(53.0f, 15.0f, -72.0f), *no_shade_shader);
         lamp3->set_color(white_color);
 
         active_shader->use();
@@ -119,9 +116,9 @@ public:
 
         glBindVertexArray(0);
 
-        enable_lighting(1);
-        enable_lighting(2);
-        enable_lighting(3);
+        lamp1->set_enabled(true);
+        lamp2->set_enabled(true);
+        lamp3->set_enabled(true);
 
         vector<const GLchar*> faces;
         faces.push_back("../../models/skybox/right.jpg");
@@ -140,6 +137,7 @@ public:
 
     void draw(GLfloat delta_time, GLenum polygon_mode)
     {
+        cout << camera->Position.x << " " << camera->Position.z << endl;
 
         // clear drawing surface
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -158,24 +156,12 @@ public:
         glm::mat4 projection = glm::perspective(camera->Zoom, (float) viewport_width / viewport_height, 0.1f,
                                                 1000.0f);
 
-        // set light levels & draw lamps
-        do_lighting(view, projection, camera->Position);
-
         // draw ground
         if (ground != nullptr) {
             ground->draw(view, projection);
         }
 
-
-
-        // todo draw stuff
-//        texture_shader->use();
-//        no_shade_shader->use();
-//        walls->Draw(*col_lighting_shader);
-//        floor->Draw(*col_lighting_shader);
-//        chair1->Draw(*col_lighting_shader);
-
-
+        // skybox
         glm::mat4 view_matrix;
 
         GLint projectionLoc = glGetUniformLocation(skyboxShaderProgram->program, "projection_matrix");
@@ -190,7 +176,7 @@ public:
         glUniformMatrix4fv(glGetUniformLocation(skyboxShaderProgram->program, "view_matrix"), 1, GL_FALSE, glm::value_ptr(skybox_view));
         glUniformMatrix4fv(glGetUniformLocation(skyboxShaderProgram->program, "projection_matrix"), 1, GL_FALSE, glm::value_ptr(projection_matrix));
 
-        glUniform1i(glGetUniformLocation(skyboxShaderProgram->program, "skyboxTexture"), 1); //use texture unit 1
+        glUniform1i(glGetUniformLocation(skyboxShaderProgram->program, "skyboxTexture"), 1);  // use texture unit 1
 
         glDepthMask(GL_FALSE);
         glBindVertexArray(skyboxVAO);
@@ -199,8 +185,12 @@ public:
 
         glDepthMask(GL_TRUE);
 
+        // set light levels & draw lamps
+        do_lighting(view, projection, camera->Position);
+
+        // draw objects
         active_shader->use();
-//
+
         walls->Draw(*texture_shader);
         floor->Draw(*texture_shader);
         chair1->Draw(*texture_shader);
@@ -225,59 +215,26 @@ public:
 
     void toggle_lighting(int room_number)
     {
-        lights_on = !lights_on;
-
-        if (lights_on) {
-            enable_lighting(room_number);
-        } else {
-            disable_lighting(room_number);
-        }
-    }
-
-    void enable_lighting(int room_number)
-    {
-        // enable light
         switch (room_number) {
             case 1:
-                col_lighting_shader->set_bool("light1.enabled", true);
+                lamp1->toggle();
                 return;
             case 2:
-                col_lighting_shader->set_bool("light2.enabled", true);
+                lamp2->toggle();
                 return;
             case 3:
-                col_lighting_shader->set_bool("light3.enabled", true);
-                return;
-            default:
+                lamp3->toggle();
                 return;
         }
     }
 
-    void toggle_shader(){
-        if (shader == 0){
+    void toggle_shader() {
+        if (shader == 0) {
             active_shader = col_lighting_shader_v2;
             shader = 1;
-        }
-        else{
+        } else {
             active_shader = col_lighting_shader;
             shader = 0;
-        }
-    }
-
-    void disable_lighting(int room_number)
-    {
-        // disable light
-        switch (room_number) {
-            case 1:
-                col_lighting_shader->set_bool("light1.enabled", false);
-                return;
-            case 2:
-                col_lighting_shader->set_bool("light2.enabled", false);
-                return;
-            case 3:
-                col_lighting_shader->set_bool("light3.enabled", false);
-                return;
-            default:
-                return;
         }
     }
 
@@ -314,12 +271,15 @@ public:
         active_shader->set_vec3("light1.ambient", ambient_vec);
         active_shader->set_vec3("light1.diffuse", diffuse_vec);
         active_shader->set_vec3("light1.specular", specular_vec);
+        active_shader->set_bool("light1.enabled", lamp1->is_enabled());
         active_shader->set_vec3("light2.ambient", ambient_vec);
         active_shader->set_vec3("light2.diffuse", diffuse_vec);
         active_shader->set_vec3("light2.specular", specular_vec);
+        active_shader->set_bool("light2.enabled", lamp2->is_enabled());
         active_shader->set_vec3("light3.ambient", ambient_vec);
         active_shader->set_vec3("light3.diffuse", diffuse_vec);
         active_shader->set_vec3("light3.specular", specular_vec);
+        active_shader->set_bool("light3.enabled", lamp3->is_enabled());
 
         // material properties
         active_shader->set_float("material.shininess", 64.0f);
@@ -361,14 +321,9 @@ public:
 
 private:
     Camera* camera = nullptr;
-    bool lights_on = true;
 
     glm::vec4 dark_green_color;
-    glm::vec4 black_color;
     glm::vec4 white_color;
-    glm::vec4 brown_color;
-    glm::vec4 red_color;
-    glm::vec4 blue_color;
 
     int viewport_height;
     int viewport_width;
@@ -380,9 +335,9 @@ private:
     Shader* skyboxShaderProgram = nullptr;
     Shader* active_shader = nullptr;
     Plane* ground = nullptr;
-    Cube* lamp1 = nullptr;
-    Cube* lamp2 = nullptr;
-    Cube* lamp3 = nullptr;
+    Lamp* lamp1 = nullptr;
+    Lamp* lamp2 = nullptr;
+    Lamp* lamp3 = nullptr;
 
     Model* walls = nullptr;
     Model* floor = nullptr;
