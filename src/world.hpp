@@ -69,18 +69,16 @@ public:
         ground->set_color(dark_green_color);
 
         // create lamps
-        lamp1 = new Lamp(glm::vec3(22.0f, 15.0f, -185.0f), *no_shade_shader);
-        lamp1->set_color(white_color);
-        lamp2 = new Lamp(glm::vec3(88.0f, 15.0f, -108.0f), *no_shade_shader);
-        lamp2->set_color(white_color);
-        lamp3 = new Lamp(glm::vec3(53.0f, 15.0f, -72.0f), *no_shade_shader);
-        lamp3->set_color(white_color);
+        lamp1 = new Lamp(glm::vec3(87.6f, 42.5f, -149.3f), *no_shade_shader);
+        lamp2 = new Lamp(glm::vec3(36.8f, 42.5f, -143.0f), *no_shade_shader);
+        lamp3 = new Lamp(glm::vec3(25.9f, 42.5f, -51.4f), *no_shade_shader);
 
         active_shader->use();
         active_shader->set_int("material.diffuse", 0);
         active_shader->set_int("material.specular", 1);
 
         // create models
+        std::cout << "Loading models..." << std::endl;
         walls = new Model("../../models/Project/walls/walls.obj");
         floor = new Model("../../models/Project/floor/floor.obj");
         chair1 = new Model("../../models/Project/chair1/chair1.obj");
@@ -101,6 +99,7 @@ public:
         table3 = new Model("../../models/Project/table3/table3.obj");
         lamps = new Model("../../models/Project/lamps/lamps.obj");
         loadOBJ("../../models/skybox/cube.obj", skybox_vertices, skybox_normals, skybox_UVs);
+        std::cout << "Models loaded!" << std::endl;
 
         //prepare skybox VAO
         glGenVertexArrays(1, &skyboxVAO);
@@ -137,7 +136,7 @@ public:
 
     void draw(GLfloat delta_time, GLenum polygon_mode)
     {
-        cout << camera->Position.x << " " << camera->Position.z << endl;
+        std::cout << camera->Position.x << " " << camera->Position.y << " " << camera->Position.z << std::endl;
 
         // clear drawing surface
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -251,10 +250,6 @@ public:
 
     void do_lighting(glm::mat4 view, glm::mat4 projection, glm::vec3 camera_pos)
     {
-        lamp1->draw(view, projection);
-        lamp2->draw(view, projection);
-        lamp3->draw(view, projection);
-
         active_shader->use();
         active_shader->set_vec3("viewPos", camera_pos);
 
@@ -265,7 +260,7 @@ public:
 
         // light properties
         glm::vec3 ambient_vec = glm::vec3(0.2f, 0.2f, 0.2f);
-        glm::vec3 diffuse_vec = glm::vec3(0.5f, 0.5f, 0.5f);
+        glm::vec3 diffuse_vec = glm::vec3(0.7f, 0.7f, 0.7f);
         glm::vec3 specular_vec = glm::vec3(1.0f, 1.0f, 1.0f);
 
         active_shader->set_vec3("light1.ambient", ambient_vec);
