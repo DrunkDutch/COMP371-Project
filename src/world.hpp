@@ -33,8 +33,8 @@ public:
         if (col_lighting_shader != nullptr) {
             delete col_lighting_shader;
         }
-        if (ground != nullptr) {
-            delete ground;
+        if (basis != nullptr) {
+            delete basis;
         }
         if (lamp1 != nullptr) {
             delete lamp1;
@@ -65,8 +65,8 @@ public:
         camera = new Camera(glm::vec3(10.0f, 20.0f, 0.0f));
 
         // create ground
-        ground = new Plane(glm::vec3(0.0f, 0.0f, 0.0f), 800, 800, *active_shader);
-        ground->set_color(dark_green_color);
+        basis = new Plane(glm::vec3(0.0f, 0.0f, 0.0f), 800, 800, *active_shader);
+        basis->set_color(dark_green_color);
 
         // create lamps
         lamp1 = new Lamp(glm::vec3(87.6f, 42.5f, -149.3f), *no_shade_shader);
@@ -136,7 +136,7 @@ public:
 
     void draw(GLfloat delta_time, GLenum polygon_mode)
     {
-        std::cout << camera->Position.x << " " << camera->Position.y << " " << camera->Position.z << std::endl;
+//        std::cout << camera->Position.x << " " << camera->Position.y << " " << camera->Position.z << std::endl;
 
         // clear drawing surface
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -146,7 +146,7 @@ public:
         active_shader->use();
         active_shader->set_int("material.diffuse", 0);
         active_shader->set_int("material.specular", 1);
-        ground = new Plane(glm::vec3(0.0f, 0.0f, 0.0f), 800, 800, *active_shader);
+        basis = new Plane(glm::vec3(0.0f, 0.0f, 0.0f), 800, 800, *active_shader);
 
 
         // camera view
@@ -155,9 +155,8 @@ public:
         glm::mat4 projection = glm::perspective(camera->Zoom, (float) viewport_width / viewport_height, 0.1f,
                                                 1000.0f);
 
-        // draw ground
-        if (ground != nullptr) {
-            ground->draw(view, projection);
+        if (basis != nullptr) {
+            basis->draw(view, projection);
         }
 
         // skybox
@@ -329,7 +328,7 @@ private:
     Shader* texture_shader = nullptr;
     Shader* skyboxShaderProgram = nullptr;
     Shader* active_shader = nullptr;
-    Plane* ground = nullptr;
+    Plane* basis = nullptr;
     Lamp* lamp1 = nullptr;
     Lamp* lamp2 = nullptr;
     Lamp* lamp3 = nullptr;
